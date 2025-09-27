@@ -1,0 +1,34 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build Folders
+bin/
+obj/
+out/
+
+# ASP.NET / .NET Core
+*.db
+*.pdb
+*.cache
+*.log
+*.DS_Store
+
+# Docker
+docker-compose.override.yml
+
+# Rider
+.idea/
+
+# Node (if any frontend)
+node_modules/
+
+# Publish output
+publish/
+
+# Secrets / local config
+appsettings.*.json
+.env
