@@ -8,6 +8,8 @@ public class User
 
     public List<Session> Sessions { get; private set; } = new();
 
+    // Constructor for EF
+    protected User() { }
     public User(string userName, string password)
     {
         Username = userName;

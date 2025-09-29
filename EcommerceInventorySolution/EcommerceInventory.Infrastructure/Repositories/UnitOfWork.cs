@@ -13,7 +13,7 @@ public class UnitOfWork : IUnitOfWOrk
         _userRepository = repository;
 
     }
-    public IUserRepository Users { get; }
+    public IUserRepository Users => _userRepository;
 
     public async Task<int> CompleteAsync()
     {
