@@ -10,11 +10,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\EcommerceInventory.Application\EcommerceInventory.Application.csproj" />
+    <ProjectReference Include="..\EcommerceInventory.Infrastructure\EcommerceInventory.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
