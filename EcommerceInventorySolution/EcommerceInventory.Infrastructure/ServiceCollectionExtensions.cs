@@ -1,6 +1,8 @@
 ﻿using EcommerceInventory.Application.RepositoryContracts;
+using EcommerceInventory.Infrastructure.BackgroundServices;
 using EcommerceInventory.Infrastructure.DataContext;
 using EcommerceInventory.Infrastructure.Helper;
+using EcommerceInventory.Infrastructure.RabbitMQ;
 using EcommerceInventory.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +20,13 @@ public static class ServiceCollectionExtensions
                                            options.UseNpgsql(connectionString));
 
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUnitOfWOrk, UnitOfWork>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOutboxRepository, OutboxRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
+        services.AddHostedService<OutboxProcessorService>();
 
         return services;
     }
