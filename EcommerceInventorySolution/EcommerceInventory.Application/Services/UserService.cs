@@ -5,9 +5,9 @@ using EcommerceInventory.Domain.Entities;
 namespace EcommerceInventory.Application.Services;
 public class UserService : IUserService
 {
-    private readonly IUnitOfWOrk _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UserService(IUnitOfWOrk unitOfWOrk)
+    public UserService(IUnitOfWork unitOfWOrk)
     {
         _unitOfWork = unitOfWOrk;
     }
@@ -21,9 +21,9 @@ public class UserService : IUserService
             throw new InvalidOperationException("Invalid username or password.");
 
         var session = new Session(user.Id, deviceId, DateTime.UtcNow.AddHours(1));
-        user.AddSession(session);
-        
-        _unitOfWork.Users.Update(user);
+
+        await _unitOfWork.Sessions.AddSessionAsync(session);
+
         await _unitOfWork.CompleteAsync();
 
         return session;

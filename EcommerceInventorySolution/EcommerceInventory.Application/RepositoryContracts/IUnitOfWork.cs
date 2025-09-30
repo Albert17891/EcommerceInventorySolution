@@ -6,5 +6,6 @@ public interface IUnitOfWork: IDisposable
     IProductRepository Products { get; }
     IOrderRepository Orders { get; }
     IOutboxRepository OutboxMessages { get; }
+    ISessionRepository Sessions { get; }
     Task<int> CompleteAsync();
 }
