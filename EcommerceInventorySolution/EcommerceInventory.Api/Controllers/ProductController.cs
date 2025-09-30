@@ -17,7 +17,7 @@ public class ProductController : ControllerBase
         _productService = productService;
     }
 
-    [HttpPost]
+    [HttpPost("Create")]
     [CustomAuthorize]
     public async Task<IActionResult> Create(CreateProductRequestDto dto)
     {
@@ -25,7 +25,7 @@ public class ProductController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("Update/{id:guid}")]
     [CustomAuthorize]
     public async Task<IActionResult> Update(Guid id, UpdateProductRequestDto dto)
     {

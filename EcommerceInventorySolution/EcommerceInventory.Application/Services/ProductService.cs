@@ -52,9 +52,7 @@ public class ProductService : IProductService
         var product = await _unitOfWork.Products.GetProductByIdAsync(productId);
         if (product == null) return null;
 
-        _mapper.Map(updateProductRequestDto, product);
-
-        _unitOfWork.Products.UpdateProduct(product);
+        _mapper.Map(updateProductRequestDto, product);     
 
         await _unitOfWork.CompleteAsync();
 

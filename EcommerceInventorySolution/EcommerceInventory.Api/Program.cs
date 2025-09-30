@@ -1,3 +1,4 @@
+using EcommerceInventory.Api.Middlewares;
 using EcommerceInventory.Application;
 using EcommerceInventory.Infrastructure;
 using FluentValidation;
@@ -42,7 +43,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 //app.UseAuthorization();
-//app.UseMiddleware<AuthMiddleware>();
+app.UseMiddleware<AuthMiddleware>();
 
 app.MapControllers();
 
