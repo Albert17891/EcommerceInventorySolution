@@ -15,7 +15,7 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
-    [HttpPost("PlaceOrder")]
+    [HttpPost("PlaceOrder/{userId:guid}")]
     [CustomAuthorize]
     public async Task<IActionResult> PlaceOrder(Guid userId, List<OrderItemDto> items)
     {
