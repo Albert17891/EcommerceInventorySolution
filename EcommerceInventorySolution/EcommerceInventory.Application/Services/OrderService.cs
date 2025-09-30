@@ -3,6 +3,7 @@ using EcommerceInventory.Application.DTO.OrderDTO;
 using EcommerceInventory.Application.RepositoryContracts;
 using EcommerceInventory.Application.ServiceContracts;
 using EcommerceInventory.Domain.Entities;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EcommerceInventory.Application.Services;
@@ -12,16 +13,19 @@ public class OrderService : IOrderService
     private readonly ILogger<OrderService> _logger;
     private readonly IPaymentService _paymentService;
     private readonly IEventPublisher _eventPublisher;
+    private readonly IBackgroundTaskQueue _taskQueue;
 
     public OrderService(IUnitOfWork unitOfWOrk,
                         ILogger<OrderService> logger,
                         IPaymentService paymentService,
-                        IEventPublisher eventPublisher)
+                        IEventPublisher eventPublisher,
+                        IBackgroundTaskQueue taskQueue)
     {
         _unitOfWork = unitOfWOrk;
         _logger = logger;
         _paymentService = paymentService;
         _eventPublisher= eventPublisher;
+        _taskQueue= taskQueue;
     }
     public async Task<CreateOrderResponseDto> CreateOrderAsync(Guid userId, List<OrderItemDto> items)
     {
@@ -43,12 +47,16 @@ public class OrderService : IOrderService
         await _unitOfWork.Orders.AddOrderAsync(order);
         await _unitOfWork.CompleteAsync();
 
-        _ = Task.Run(async () => await ProcessOrderAsync(order.Id));
+        _taskQueue.QueueBackgroundWorkItem(async (sp,token) =>
+        {
+            var orderService = sp.GetRequiredService<IOrderService>();
+            await orderService.ProcessOrderAsync(order.Id);
+        });      
 
         return new CreateOrderResponseDto(order.Id, true, "Order created successfully");
     }
 
-    private async Task ProcessOrderAsync(Guid orderId)
+    public async Task ProcessOrderAsync(Guid orderId)
     {
         try
         {

@@ -27,6 +27,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
+
+        services.AddHostedService<QueuedHostedService>();
         services.AddHostedService<OutboxProcessorService>();
 
         return services;

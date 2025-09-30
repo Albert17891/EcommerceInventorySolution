@@ -18,7 +18,7 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
 
         builder.Property(m => m.Payload)
                .IsRequired()
-               .HasColumnType("nvarchar(max)");
+               .HasColumnType("text");
        
 
         builder.Property(m => m.CreatedAt)

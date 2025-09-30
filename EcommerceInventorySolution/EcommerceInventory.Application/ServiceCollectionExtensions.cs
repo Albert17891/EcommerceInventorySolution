@@ -15,6 +15,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IEventPublisher, OutboxEventPublisher>();
 
+        services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
         services.AddAutoMapper(cfg =>
         {
             cfg.AddProfile<ProductMappingProfile>();
