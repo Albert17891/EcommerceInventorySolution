@@ -1,4 +1,4 @@
-﻿namespace EcommerceInventory.Domain.Entities;
+﻿namespace EcommerceInventory.Domain.Entities.Orders;
 public class OrderItem
 {
     public Guid Id { get; private set; } = Guid.NewGuid();

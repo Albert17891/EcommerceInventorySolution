@@ -1,4 +1,4 @@
-﻿namespace EcommerceInventory.Domain.Entities;
+﻿namespace EcommerceInventory.Domain.Entities.Orders;
 public class OrderCompletedEvent
 {
     public Guid OrderId { get; set; }
