@@ -18,7 +18,7 @@ public class Product
 
     public bool TryPurchase(int quantity)
     {
-        if (Stock > quantity)
+        if (Stock >= quantity)
         {
             Stock -= quantity;
 
