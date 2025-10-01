@@ -17,9 +17,9 @@ public class OrderController : ControllerBase
 
     [HttpPost("PlaceOrder/{userId:guid}")]
     [CustomAuthorize]
-    public async Task<IActionResult> PlaceOrder(Guid userId, List<OrderItemDto> items)
+    public async Task<IActionResult> PlaceOrder(Guid userId, string discountCard, List<OrderItemDto> items)
     {
-        var order = await _orderService.CreateOrderAsync(userId, items);
+        var order = await _orderService.CreateOrderAsync(userId, items,discountCard);
 
         return Ok(order);
     }
