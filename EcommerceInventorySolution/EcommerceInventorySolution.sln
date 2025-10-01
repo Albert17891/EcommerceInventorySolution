@@ -11,12 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceInventory.Domain",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceInventory.Infrastructure", "EcommerceInventory.Infrastructure\EcommerceInventory.Infrastructure.csproj", "{FA2D1509-58EB-45F7-ABB2-999556DA035E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceInventory.Tests", "EcommerceInventory.Tests\EcommerceInventory.Tests.csproj", "{A250EFD9-1D97-493F-9B27-A4155AD160E3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceInventory.Tests", "EcommerceInventory.Tests\EcommerceInventory.Tests.csproj", "{868BB69E-AFD6-429C-83D6-6EE5119EBA74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,10 +40,10 @@ Global
 		{FA2D1509-58EB-45F7-ABB2-999556DA035E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA2D1509-58EB-45F7-ABB2-999556DA035E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA2D1509-58EB-45F7-ABB2-999556DA035E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A250EFD9-1D97-493F-9B27-A4155AD160E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A250EFD9-1D97-493F-9B27-A4155AD160E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A250EFD9-1D97-493F-9B27-A4155AD160E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A250EFD9-1D97-493F-9B27-A4155AD160E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{868BB69E-AFD6-429C-83D6-6EE5119EBA74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{868BB69E-AFD6-429C-83D6-6EE5119EBA74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{868BB69E-AFD6-429C-83D6-6EE5119EBA74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{868BB69E-AFD6-429C-83D6-6EE5119EBA74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
