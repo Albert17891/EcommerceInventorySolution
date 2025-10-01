@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEventPublisher, OutboxEventPublisher>();
         services.AddScoped<IDiscountService, DiscountService>();
         services.AddScoped<DiscountStrategyFactory>();
+        services.AddScoped<IDiscountStrategyFactory, DiscountStrategyFactory>();
 
         services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 

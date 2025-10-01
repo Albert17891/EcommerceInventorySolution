@@ -15,14 +15,14 @@ public class OrderService : IOrderService
     private readonly IPaymentService _paymentService;
     private readonly IEventPublisher _eventPublisher;
     private readonly IBackgroundTaskQueue _taskQueue;
-    private readonly DiscountStrategyFactory _discountStrategyFactory;
+    private readonly IDiscountStrategyFactory _discountStrategyFactory;
 
     public OrderService(IUnitOfWork unitOfWOrk,
                         ILogger<OrderService> logger,
                         IPaymentService paymentService,
                         IEventPublisher eventPublisher,
                         IBackgroundTaskQueue taskQueue,
-                        DiscountStrategyFactory discountStrategyFactory)
+                        IDiscountStrategyFactory discountStrategyFactory)
     {
         _unitOfWork = unitOfWOrk;
         _logger = logger;

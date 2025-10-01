@@ -1,15 +1,21 @@
 ﻿using EcommerceInventory.Application.RepositoryContracts;
+using EcommerceInventory.Application.ServiceContracts;
 using EcommerceInventory.Domain.Contracts;
 
 namespace EcommerceInventory.Application.Discounts;
 
-public class DiscountStrategyFactory
+public class DiscountStrategyFactory:IDiscountStrategyFactory
 {
     private readonly IDiscountRepository _discountRepository;
 
     public DiscountStrategyFactory(IDiscountRepository discountRepository)
     {
         _discountRepository = discountRepository;
+    }
+
+    // Add this parameterless constructor for testing
+    public DiscountStrategyFactory()
+    {
     }
 
     public async Task<IDiscountStrategy> CreateAsync(string cardType, decimal orderAmount)
