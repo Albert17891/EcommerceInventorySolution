@@ -1,5 +1,5 @@
 ﻿using EcommerceInventory.Application.RepositoryContracts;
-using EcommerceInventory.Domain.Entities;
+using EcommerceInventory.Domain.Entities.Orders;
 using EcommerceInventory.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
 

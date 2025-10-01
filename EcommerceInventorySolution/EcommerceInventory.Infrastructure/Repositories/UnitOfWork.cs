@@ -10,13 +10,15 @@ public class UnitOfWork : IUnitOfWork
     private readonly IOrderRepository _orderRepository;
     private readonly IOutboxRepository _outboxReposiotry;
     private readonly ISessionRepository _sessionRepository;
+    private readonly IDiscountRepository _discountRepository;
 
     public UnitOfWork(AppDbContext context,
         IUserRepository repository,
         IProductRepository productRepository,
         IOrderRepository orderRepository,
         IOutboxRepository outboxRepository,
-        ISessionRepository sessionRepository)
+        ISessionRepository sessionRepository,
+        IDiscountRepository discountRepository)
     {
         _context = context;
         _userRepository = repository;
@@ -24,7 +26,7 @@ public class UnitOfWork : IUnitOfWork
         _orderRepository = orderRepository;
         _outboxReposiotry = outboxRepository;
         _sessionRepository = sessionRepository;
-
+        _discountRepository = discountRepository;
     }
     public IUserRepository Users => _userRepository;
 
@@ -35,6 +37,8 @@ public class UnitOfWork : IUnitOfWork
     public IOutboxRepository OutboxMessages => _outboxReposiotry;
 
     public ISessionRepository Sessions => _sessionRepository;
+
+    public IDiscountRepository DiscountRules => _discountRepository;
 
     public async Task<int> CompleteAsync()
     {

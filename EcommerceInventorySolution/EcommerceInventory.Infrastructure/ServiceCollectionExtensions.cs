@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IOutboxRepository, OutboxRepository>();
         services.AddScoped<ISessionRepository, SessionRepository>();
+        services.AddScoped<IDiscountRepository, DiscountRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
