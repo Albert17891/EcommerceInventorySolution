@@ -1,4 +1,5 @@
-﻿using EcommerceInventory.Application.Mappings;
+﻿using EcommerceInventory.Application.Discounts;
+using EcommerceInventory.Application.Mappings;
 using EcommerceInventory.Application.ServiceContracts;
 using EcommerceInventory.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,12 +15,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IEventPublisher, OutboxEventPublisher>();
+        services.AddScoped<IDiscountService, DiscountService>();
+        services.AddScoped<DiscountStrategyFactory>();
 
         services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 
         services.AddAutoMapper(cfg =>
         {
             cfg.AddProfile<ProductMappingProfile>();
+            cfg.AddProfile<DiscountRuleMappingProfile>();
         });
 
         return services;

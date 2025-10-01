@@ -1,8 +1,9 @@
 ﻿using EcommerceInventory.Application.Common.Policies;
+using EcommerceInventory.Application.Discounts;
 using EcommerceInventory.Application.DTO.OrderDTO;
 using EcommerceInventory.Application.RepositoryContracts;
 using EcommerceInventory.Application.ServiceContracts;
-using EcommerceInventory.Domain.Entities;
+using EcommerceInventory.Domain.Entities.Orders;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -14,20 +15,23 @@ public class OrderService : IOrderService
     private readonly IPaymentService _paymentService;
     private readonly IEventPublisher _eventPublisher;
     private readonly IBackgroundTaskQueue _taskQueue;
+    private readonly DiscountStrategyFactory _discountStrategyFactory;
 
     public OrderService(IUnitOfWork unitOfWOrk,
                         ILogger<OrderService> logger,
                         IPaymentService paymentService,
                         IEventPublisher eventPublisher,
-                        IBackgroundTaskQueue taskQueue)
+                        IBackgroundTaskQueue taskQueue,
+                        DiscountStrategyFactory discountStrategyFactory)
     {
         _unitOfWork = unitOfWOrk;
         _logger = logger;
         _paymentService = paymentService;
-        _eventPublisher= eventPublisher;
-        _taskQueue= taskQueue;
+        _eventPublisher = eventPublisher;
+        _taskQueue = taskQueue;
+        _discountStrategyFactory = discountStrategyFactory;
     }
-    public async Task<CreateOrderResponseDto> CreateOrderAsync(Guid userId, List<OrderItemDto> items)
+    public async Task<CreateOrderResponseDto> CreateOrderAsync(Guid userId, List<OrderItemDto> items, string discoundCartType)
     {
         var order = new Order(userId);
 
@@ -44,14 +48,18 @@ public class OrderService : IOrderService
             order.AddItem(product.Id, item.Quantity, product.Price);
         }
 
+        var discountStrategy = await _discountStrategyFactory.CreateAsync(discoundCartType, order.TotalAmount);
+        order.SetDiscountStrategy(discountStrategy);
+        order.ApplyDiscount();
+
         await _unitOfWork.Orders.AddOrderAsync(order);
         await _unitOfWork.CompleteAsync();
 
-        _taskQueue.QueueBackgroundWorkItem(async (sp,token) =>
+        _taskQueue.QueueBackgroundWorkItem(async (sp, token) =>
         {
             var orderService = sp.GetRequiredService<IOrderService>();
             await orderService.ProcessOrderAsync(order.Id);
-        });      
+        });
 
         return new CreateOrderResponseDto(order.Id, true, "Order created successfully");
     }
@@ -80,13 +88,13 @@ public class OrderService : IOrderService
 
                 await _unitOfWork.CompleteAsync();
 
-                _logger.LogError("Stock update failed for order {OrderId} ", orderId);              
+                _logger.LogError("Stock update failed for order {OrderId} ", orderId);
 
                 return;
             }
 
             _logger.LogInformation("Processing payment for order {OrderId}", orderId);
-            bool paymentSuccess = await _paymentService.ProcessPaymentAsync(order.TotalAmount);
+            bool paymentSuccess = await _paymentService.ProcessPaymentAsync(order.FinalAmount);
 
             if (!paymentSuccess)
             {
@@ -97,7 +105,7 @@ public class OrderService : IOrderService
 
                 _logger.LogWarning("Payment failed for order {OrderId}", orderId);
                 return;
-            }          
+            }
 
             order.MarkAsCompleted();
             await _unitOfWork.CompleteAsync();
@@ -110,7 +118,7 @@ public class OrderService : IOrderService
         {
 
             _logger.LogError(ex, "Error processing order {OrderId}", orderId);
-           
+
             try
             {
                 var order = await _unitOfWork.Orders.GetOrderByIdWithItemsAsync(orderId);
@@ -143,7 +151,7 @@ public class OrderService : IOrderService
                     _unitOfWork.Products.UpdateProduct(product);
                 }
             }
-        });        
+        });
     }
 
     private async Task PublishOrderCompletedEventAsync(Order order)
@@ -152,8 +160,8 @@ public class OrderService : IOrderService
         {
             OrderId = order.Id,
             UserId = order.UserId,
-            TotalAmount = order.TotalAmount,     
-            CompletedAt= DateTime.UtcNow,
+            TotalAmount = order.TotalAmount,
+            CompletedAt = DateTime.UtcNow,
         };
 
         await _eventPublisher.PublishAsync(orderCompletedEvent);
@@ -171,7 +179,7 @@ public class OrderService : IOrderService
                 {
                     var product = await _unitOfWork.Products.GetProductByIdAsync(item.ProductId);
 
-                    if(product is null)
+                    if (product is null)
                         throw new InvalidOperationException($"Product {item.ProductId} not found");
 
                     if (!product.TryPurchase(item.Quantity))
