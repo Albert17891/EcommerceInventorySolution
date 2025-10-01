@@ -1,4 +1,6 @@
 ﻿using EcommerceInventory.Domain.Entities;
+using EcommerceInventory.Domain.Entities.Discounts;
+using EcommerceInventory.Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceInventory.Infrastructure.DataContext;
@@ -15,7 +17,8 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<OutboxMessage> OutboxMessages { get; set; }   
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
+    public DbSet<DiscountRule> DiscountRules { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
