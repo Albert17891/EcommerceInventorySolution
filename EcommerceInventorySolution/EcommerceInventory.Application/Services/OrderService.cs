@@ -1,5 +1,4 @@
 ﻿using EcommerceInventory.Application.Common.Policies;
-using EcommerceInventory.Application.Discounts;
 using EcommerceInventory.Application.DTO.OrderDTO;
 using EcommerceInventory.Application.RepositoryContracts;
 using EcommerceInventory.Application.ServiceContracts;
@@ -31,7 +30,7 @@ public class OrderService : IOrderService
         _taskQueue = taskQueue;
         _discountStrategyFactory = discountStrategyFactory;
     }
-    public async Task<CreateOrderResponseDto> CreateOrderAsync(Guid userId, List<OrderItemDto> items, string discoundCartType)
+    public async Task<CreateOrderResponseDto> CreateOrderAsync(Guid userId, List<OrderItemDto> items, string? discoundCartType)
     {
         var order = new Order(userId);
 
