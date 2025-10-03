@@ -34,6 +34,11 @@ public class UserService : IUserService
         var user = await _unitOfWork.Users.GetUserWithAllActiveSessionsAsync(userId)
             ?? throw new InvalidOperationException("User not found.");
 
+        if (user.Sessions == null || !user.Sessions.Any())
+        {
+            throw new InvalidOperationException("Session not found or already expired.");
+        }
+
         user.RemoveAllSessions();
 
         _unitOfWork.Users.Update(user);
@@ -43,15 +48,17 @@ public class UserService : IUserService
 
     public async Task LogoutAsync(Guid userId, Guid sessionId)
     {
-        var user = await _unitOfWork.Users.GetUserWithCurrentSessionAsync(userId,sessionId)
-            ?? throw new InvalidOperationException("User  not found.");      
+        var user = await _unitOfWork.Users.GetUserWithCurrentSessionAsync(userId, sessionId)
+            ?? throw new InvalidOperationException("User  not found.");
 
-        if (user.Sessions != null)
+        if (user.Sessions == null || !user.Sessions.Any())
         {
-            user.RemoveSession(user.Sessions.First());
-            _unitOfWork.Users.Update(user);
-            await _unitOfWork.CompleteAsync();
+            throw new InvalidOperationException("Session not found or already expired.");
         }
+
+        user.RemoveSession(user.Sessions.First());
+        _unitOfWork.Users.Update(user);
+        await _unitOfWork.CompleteAsync();
     }
 
     public async Task<User> RegisterUserAsync(string username, string password)
