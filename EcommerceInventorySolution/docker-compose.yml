@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: ecommerce-postgres
@@ -22,7 +19,6 @@ services:
       timeout: 5s
       retries: 5
 
-  
   rabbitmq:
     image: rabbitmq:3.13-management
     container_name: ecommerce-rabbitmq
@@ -30,8 +26,8 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "5672:5672"       # AMQP protocol
-      - "15672:15672"     # Management UI
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     networks:
@@ -42,7 +38,36 @@ services:
       timeout: 5s
       retries: 5
 
-  
+  migrator:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: ecommerce-migrator
+    working_dir: /src
+    volumes:
+      - ./:/src
+    networks:
+      - ecommerce-network
+    environment:
+      - POSTGRE_HOST=postgres
+      - POSTGRE_PORT=5432
+      - POSTGRE_DB=EcommerceInventory
+      - POSTGRE_USER=postgres
+      - POSTGRE_PASSWORD=godika
+      - PATH=/root/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "=== Installing dotnet-ef tool ===" && \
+        dotnet tool install --global dotnet-ef --version 8.0.* && \
+        echo "=== Restoring packages ===" && \
+        dotnet restore EcommerceInventory.Api/EcommerceInventory.Api.csproj && \
+        echo "=== Running migrations ===" && \
+        dotnet ef database update --project EcommerceInventory.Infrastructure/EcommerceInventory.Infrastructure.csproj --startup-project EcommerceInventory.Api/EcommerceInventory.Api.csproj --verbose && \
+        echo "=== Migrations completed successfully ==="
+    restart: "no"
+
   api:
     build:
       context: .
@@ -51,11 +76,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      # PostgreSQL
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=EcommerceInventory;Username=postgres;Password=godika
-      # RabbitMQ
+      - POSTGRE_HOST=postgres
+      - POSTGRE_PORT=5432
+      - POSTGRE_DB=EcommerceInventory
+      - POSTGRE_USER=postgres
+      - POSTGRE_PASSWORD=godika
       - RabbitMQ__HostName=rabbitmq
-      - RabbitMQ__Port=5672      
+      - RabbitMQ__Port=5672
       - RabbitMQ__Exchange=loyalty-events
     ports:
       - "8080:8080"
@@ -64,6 +91,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      migrator:
+        condition: service_completed_successfully
     networks:
       - ecommerce-network
     restart: on-failure

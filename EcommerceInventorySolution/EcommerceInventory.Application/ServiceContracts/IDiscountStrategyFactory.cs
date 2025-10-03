@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 namespace EcommerceInventory.Application.ServiceContracts;
 public interface IDiscountStrategyFactory
 {
-    Task<IDiscountStrategy> CreateAsync(string cardType, decimal orderAmount);
+    Task<IDiscountStrategy> CreateAsync(string? cardType, decimal orderAmount);
 }

@@ -9,7 +9,7 @@ public class RabbitMQPublisher : IRabbitMQPublisher, IDisposable
     private readonly IConfiguration _configuration;
     private readonly ILogger<RabbitMQPublisher> _logger;
     private readonly Lazy<Task<(IConnection connection, IChannel channel)>> _connectionLazy;
-
+    private string _exchangeName = string.Empty;
     public RabbitMQPublisher(IConfiguration configuration, ILogger<RabbitMQPublisher> logger)
     {
         _configuration = configuration;
@@ -21,17 +21,24 @@ public class RabbitMQPublisher : IRabbitMQPublisher, IDisposable
     {
         var hostName = _configuration["RabbitMQ:HostName"]!;
         var port = int.Parse(_configuration["RabbitMQ:Port"]!);
+        var userName = _configuration["RabbitMQ:UserName"] ?? "guest";
+        var password = _configuration["RabbitMQ:Password"] ?? "guest";
+       _exchangeName = _configuration["RabbitMQ:Exchange"]!;
 
         var factory = new ConnectionFactory()
         {
             HostName = hostName,
-            Port = port
+            Port = port,
+            UserName = userName,
+            Password = password,
         };
 
         var connection = await factory.CreateConnectionAsync();
         var channel = await connection.CreateChannelAsync();
 
-        _logger.LogInformation("RabbitMQ connection established");
+        await channel.ExchangeDeclareAsync(exchange: _exchangeName, type: ExchangeType.Direct, durable: true);
+
+        _logger.LogInformation("RabbitMQ connection established and exchange declared: {Exchange}", _exchangeName);
 
         return (connection, channel);
     }
@@ -41,11 +48,8 @@ public class RabbitMQPublisher : IRabbitMQPublisher, IDisposable
         var (connection, channel) = await _connectionLazy.Value;
 
         var messageBody = Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(message));
-
-        string exchangeName = _configuration["RabbitMQ:ExchangeName"]!;
-
-        await channel.ExchangeDeclareAsync(exchange: exchangeName, type: ExchangeType.Direct, durable: true);
-        await channel.BasicPublishAsync(exchange: exchangeName,
+       
+        await channel.BasicPublishAsync(exchange: _exchangeName,
                                         routingKey: routingKey,
                                         body: messageBody);
 

@@ -18,7 +18,7 @@ public class DiscountStrategyFactory:IDiscountStrategyFactory
     {
     }
 
-    public async Task<IDiscountStrategy> CreateAsync(string cardType, decimal orderAmount)
+    public async Task<IDiscountStrategy> CreateAsync(string? cardType, decimal orderAmount)
     {
         if (string.IsNullOrWhiteSpace(cardType))
             return new NoDiscountStrategy();
