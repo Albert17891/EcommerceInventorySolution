@@ -26,7 +26,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Login([FromBody] Application.DTO.LoginRequest request)
     {
         var session = await _userService.LoginAsync(request.Username, request.Password, request.DeviceId);
-        return Ok(new { session.Id, session.DeviceId, session.ExpiresAt ,session.Token});
+        return Ok(new {SessionId= session.Id, session.DeviceId, session.ExpiresAt ,session.Token});
     }
 
     [HttpPost("logout")]

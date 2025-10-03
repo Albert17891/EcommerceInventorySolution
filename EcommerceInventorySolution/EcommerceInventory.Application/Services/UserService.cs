@@ -31,7 +31,7 @@ public class UserService : IUserService
 
     public async Task LogoutAllAsync(Guid userId)
     {
-        var user = await _unitOfWork.Users.GetByIdAsync(userId)
+        var user = await _unitOfWork.Users.GetUserWithAllActiveSessionsAsync(userId)
             ?? throw new InvalidOperationException("User not found.");
 
         user.RemoveAllSessions();
@@ -43,13 +43,12 @@ public class UserService : IUserService
 
     public async Task LogoutAsync(Guid userId, Guid sessionId)
     {
-        var user = await _unitOfWork.Users.GetByIdAsync(userId)
-            ?? throw new InvalidOperationException("User not found.");
+        var user = await _unitOfWork.Users.GetUserWithCurrentSessionAsync(userId,sessionId)
+            ?? throw new InvalidOperationException("User  not found.");      
 
-        var session = user.Sessions.FirstOrDefault(s => s.Id == sessionId);
-        if (session != null)
+        if (user.Sessions != null)
         {
-            user.RemoveSession(session);
+            user.RemoveSession(user.Sessions.First());
             _unitOfWork.Users.Update(user);
             await _unitOfWork.CompleteAsync();
         }
